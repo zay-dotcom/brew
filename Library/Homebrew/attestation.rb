@@ -189,7 +189,7 @@ module Homebrew
       attestation
     end
 
-    ATTESTATION_CACHE_DIRECTORY = T.let((HOMEBREW_CACHE/"attesttion").freeze, Pathname)
+    ATTESTATION_CACHE_DIRECTORY = T.let((HOMEBREW_CACHE/"attestation").freeze, Pathname)
 
     sig { params(bottle: Bottle).returns(Pathname) }
     def self.cached_attestation_path(bottle)

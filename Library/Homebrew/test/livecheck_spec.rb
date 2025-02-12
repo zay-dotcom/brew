@@ -162,11 +162,15 @@ RSpec.describe Livecheck do
       # (i.e. existing values aren't reset to `nil`). [We only call `url` once
       # in a `livecheck` block but this should technically work due to how it's
       # implemented.]
-      livecheck_f.url(url_string, homebrew_curl: true, post_form: post_hash)
+      livecheck_f.url(url_string, homebrew_curl: true, post_form: post_hash, user_agent: :browser)
       livecheck_f.url(url_string, post_json: post_hash)
       expect(livecheck_f.options.homebrew_curl).to be(true)
       expect(livecheck_f.options.post_form).to eq(post_hash)
       expect(livecheck_f.options.post_json).to eq(post_hash)
+      expect(livecheck_f.options.user_agent).to eq(:browser)
+
+      livecheck_f.url(url_string, user_agent: "Example")
+      expect(livecheck_f.options.user_agent).to eq("Example")
     end
 
     it "raises an ArgumentError if the argument isn't a valid Symbol" do

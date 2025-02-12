@@ -207,7 +207,13 @@ module Homebrew
           )]
         end
 
-        [:default, :browser].each do |user_agent|
+        user_agents = if options.user_agent
+          [options.user_agent]
+        else
+          [:default, :browser]
+        end
+
+        user_agents.each do |user_agent|
           begin
             parsed_output = curl_headers(
               *curl_post_args,
@@ -247,8 +253,14 @@ module Homebrew
           )]
         end
 
+        user_agents = if options.user_agent
+          [options.user_agent]
+        else
+          [:default, :browser]
+        end
+
         stderr = T.let(nil, T.nilable(String))
-        [:default, :browser].each do |user_agent|
+        user_agents.each do |user_agent|
           stdout, stderr, status = curl_output(
             *curl_post_args,
             *PAGE_CONTENT_CURL_ARGS, url,

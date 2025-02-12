@@ -18,6 +18,10 @@ module Homebrew
       # JSON data to use when making a `POST` request.
       prop :post_json, T.nilable(T::Hash[Symbol, String])
 
+      # User agent for curl to use. Symbol arguments should use a value
+      # supported by {Utils::Curl::curl_args}.
+      prop :user_agent, T.nilable(T.any(String, Symbol))
+
       # Returns a `Hash` of options that are provided as arguments to `url`.
       sig { returns(T::Hash[Symbol, T.untyped]) }
       def url_options
@@ -25,6 +29,7 @@ module Homebrew
           homebrew_curl:,
           post_form:,
           post_json:,
+          user_agent:,
         }
       end
 
@@ -89,7 +94,8 @@ module Homebrew
 
         @homebrew_curl == other.homebrew_curl &&
           @post_form == other.post_form &&
-          @post_json == other.post_json
+          @post_json == other.post_json &&
+          @user_agent == other.user_agent
       end
       alias eql? ==
 

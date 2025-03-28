@@ -228,28 +228,6 @@ module Homebrew
         when "check"
           require "bundle/commands/check"
           Homebrew::Bundle::Commands::Check.run(global:, file:, no_upgrade:, verbose:)
-        when *BUNDLE_EXEC_COMMANDS
-          named_args = case subcommand
-          when "exec"
-            _subcommand, *named_args = args.named
-            named_args
-          when "sh"
-            preferred_path = Utils::Shell.preferred_path(default: "/bin/bash")
-            notice = unless Homebrew::EnvConfig.no_env_hints?
-              <<~EOS
-                Your shell has been configured to use a build environment from your `Brewfile`.
-                This should help you build stuff.
-                Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
-                When done, type `exit`.
-              EOS
-            end
-            ENV["HOMEBREW_FORCE_API_AUTO_UPDATE"] = nil
-            [Utils::Shell.shell_with_prompt("brew bundle", preferred_path:, notice:)]
-          when "env"
-            ["env"]
-          end
-          require "bundle/commands/exec"
-          Homebrew::Bundle::Commands::Exec.run(*named_args, global:, file:, subcommand:, services: args.services?)
         when "list"
           require "bundle/commands/list"
           Homebrew::Bundle::Commands::List.run(
@@ -290,6 +268,28 @@ module Homebrew
             require "bundle/commands/remove"
             Homebrew::Bundle::Commands::Remove.run(*named_args, type: selected_types.first, global:, file:)
           end
+        when *BUNDLE_EXEC_COMMANDS
+          named_args = case subcommand
+          when "exec"
+            _subcommand, *named_args = args.named
+            named_args
+          when "sh"
+            preferred_path = Utils::Shell.preferred_path(default: "/bin/bash")
+            notice = unless Homebrew::EnvConfig.no_env_hints?
+              <<~EOS
+                Your shell has been configured to use a build environment from your `Brewfile`.
+                This should help you build stuff.
+                Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+                When done, type `exit`.
+              EOS
+            end
+            ENV["HOMEBREW_FORCE_API_AUTO_UPDATE"] = nil
+            [Utils::Shell.shell_with_prompt("brew bundle", preferred_path:, notice:)]
+          when "env"
+            ["env"]
+          end
+          require "bundle/commands/exec"
+          Homebrew::Bundle::Commands::Exec.run(*named_args, global:, file:, subcommand:, services: args.services?)
         else
           raise UsageError, "unknown subcommand: #{subcommand}"
         end

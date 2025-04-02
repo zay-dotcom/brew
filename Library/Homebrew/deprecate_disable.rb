@@ -41,6 +41,23 @@ module DeprecateDisable
     :disabled if formula_or_cask.disabled?
   end
 
+  sig {
+    params(
+      formula:   T.nilable(String),
+      cask:      T.nilable(String),
+      not_typed: T.nilable(String),
+    ).returns(T.nilable(String))
+  }
+  def replacement_with_type(formula, cask, not_typed)
+    if formula
+      "--formula #{formula}"
+    elsif cask
+      "--cask #{cask}"
+    else
+      not_typed
+    end
+  end
+
   sig { params(formula_or_cask: T.any(Formula, Cask::Cask)).returns(T.nilable(String)) }
   def message(formula_or_cask)
     return if type(formula_or_cask).blank?
@@ -77,23 +94,25 @@ module DeprecateDisable
       end
     end
 
-    replacement = if formula_or_cask.deprecated?
-      formula_or_cask.deprecation_replacement
-    elsif formula_or_cask.disabled?
-      formula_or_cask.disable_replacement
-    end
-
-    replacement_type = if formula_or_cask.deprecated?
-      formula_or_cask.deprecation_replacement_type
-    elsif formula_or_cask.disabled?
-      formula_or_cask.disable_replacement_type
+    replacement = if formula_or_cask.disabled?
+      replacement_with_type(
+        formula_or_cask.disable_replacement_formula,
+        formula_or_cask.disable_replacement_cask,
+        formula_or_cask.disable_replacement,
+      )
+    elsif formula_or_cask.deprecated?
+      replacement_with_type(
+        formula_or_cask.deprecation_replacement_formula,
+        formula_or_cask.deprecation_replacement_cask,
+        formula_or_cask.deprecation_replacement,
+      )
     end
 
     if replacement.present?
       message << "\n"
       message << <<~EOS
         Replacement:
-          brew install --#{replacement_type} #{replacement}
+          brew install #{replacement}
       EOS
     end
 

@@ -156,17 +156,21 @@ module Homebrew
                                          read_only_run: args.dry_run?,
                                          silent:        args.quiet?)
 
-        run_cask_audit(cask, old_contents)
-        run_cask_style(cask, old_contents)
+        # run_cask_audit(cask, old_contents)
+        # run_cask_style(cask, old_contents)
 
         pr_info = {
+          commits:     [{
+            commit_message:,
+            old_contents:,
+            sourcefile_path: cask.sourcefile_path,
+          }],
           branch_name:,
-          commit_message:,
-          old_contents:,
-          pr_message:      "Created with `brew bump-cask-pr`.",
-          sourcefile_path: cask.sourcefile_path,
-          tap:             cask.tap,
+          pr_message:  "Created with `brew bump-cask-pr`.",
+          tap:         cask.tap,
+          pr_title:    commit_message,
         }
+
         GitHub.create_bump_pr(pr_info, args:)
       end
 

@@ -12,7 +12,7 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def appcast(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.any(::Pathname, ::String)) }
   def appdir(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
@@ -90,7 +90,7 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }
   def disabled?(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def discontinued?(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
@@ -135,13 +135,13 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def name(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.nilable(MacOSVersion)) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def on_system_block_min_os(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }
   def on_system_blocks_exist?(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.nilable(::String)) }
   def os(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
@@ -165,13 +165,13 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def service(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.nilable(T.any(::Checksum, ::Symbol))) }
   def sha256(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def stage_only(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  sig { params(args: T.untyped, block: T.untyped).returns(::Pathname) }
   def staged_path(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
@@ -186,10 +186,10 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def uninstall_preflight(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.nilable(::Cask::URL)) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def url(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T.nilable(::Cask::DSL::Version)) }
   def version(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }

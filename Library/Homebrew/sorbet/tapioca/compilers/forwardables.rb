@@ -4,6 +4,7 @@
 require_relative "../../../global"
 require "sorbet/tapioca/utils"
 require "utils/ast"
+require "cask/cask"
 
 module Tapioca
   module Compilers
@@ -13,12 +14,9 @@ module Tapioca
       HASH_METHODS = T.let(["to_h", "to_hash"].freeze, T::Array[String])
       STRING_METHODS = T.let(["to_s", "to_str", "to_json"].freeze, T::Array[String])
       # Use this to override the default return type of a forwarded method:
-      RETURN_TYPE_OVERRIDES = T.let({
-        "::Cask::Cask" => {
-          "on_system_block_min_os" => "T.nilable(MacOSVersion)",
-          "url"                    => "T.nilable(::Cask::URL)",
-        },
-      }.freeze, T::Hash[String, T::Hash[String, String]])
+      DELEGATIONS = T.let({
+        "::Cask::Cask" => ::Cask::DSL,
+      }.freeze, T::Hash[String, Module])
 
       ConstantType = type_member { { fixed: Module } }
 
@@ -59,7 +57,9 @@ module Tapioca
 
       sig { params(klass: String, name: String).returns(String) }
       def return_type(klass, name)
-        if (override = RETURN_TYPE_OVERRIDES.dig(klass, name)) then override
+        if (override = DELEGATIONS[klass]) && override.method_defined?(name)
+          signature = T::Utils.signature_for_method(override.instance_method(name))
+          signature&.return_type&.to_s || "T.untyped"
         elsif name.end_with?("?") then "T::Boolean"
         elsif ARRAY_METHODS.include?(name) then "Array"
         elsif HASH_METHODS.include?(name) then "Hash"

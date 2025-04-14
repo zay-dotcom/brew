@@ -43,18 +43,17 @@ module DeprecateDisable
 
   sig {
     params(
-      formula:   T.nilable(String),
-      cask:      T.nilable(String),
-      not_typed: T.nilable(String),
+      formula: T.nilable(String),
+      cask:    T.nilable(String),
     ).returns(T.nilable(String))
   }
-  def replacement_with_type(formula, cask, not_typed)
-    if formula
+  def replacement_with_type(formula, cask)
+    if formula && formula == cask
+      formula
+    elsif formula
       "--formula #{formula}"
     elsif cask
       "--cask #{cask}"
-    else
-      not_typed
     end
   end
 
@@ -98,13 +97,11 @@ module DeprecateDisable
       replacement_with_type(
         formula_or_cask.disable_replacement_formula,
         formula_or_cask.disable_replacement_cask,
-        formula_or_cask.disable_replacement,
       )
     elsif formula_or_cask.deprecated?
       replacement_with_type(
         formula_or_cask.deprecation_replacement_formula,
         formula_or_cask.deprecation_replacement_cask,
-        formula_or_cask.deprecation_replacement,
       )
     end
 

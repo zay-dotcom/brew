@@ -1477,13 +1477,6 @@ class Formula
   # @see .deprecate!
   delegate deprecation_reason: :"self.class"
 
-  # The replacement for this deprecated {Formula}.
-  # Returns `nil` if no replacement is specified or the formula is not deprecated.
-  # @!method deprecation_replacement
-  # @return [String]
-  # @see .deprecate!
-  delegate deprecation_replacement: :"self.class"
-
   # The replacement formula for this deprecated {Formula}.
   # Returns `nil` if no replacement is specified or the formula is not deprecated.
   # @!method deprecation_replacement_formula
@@ -1518,13 +1511,6 @@ class Formula
   # @return [String, Symbol]
   # @see .disable!
   delegate disable_reason: :"self.class"
-
-  # The replacement for this disabled {Formula}.
-  # Returns `nil` if no replacement is specified or the formula is not disabled.
-  # @!method disable_replacement
-  # @return [String]
-  # @see .disable!
-  delegate disable_replacement: :"self.class"
 
   # The replacement formula for this disabled {Formula}.
   # Returns `nil` if no replacement is specified or the formula is not disabled.
@@ -2560,13 +2546,11 @@ class Formula
       "deprecated"                      => deprecated?,
       "deprecation_date"                => deprecation_date,
       "deprecation_reason"              => deprecation_reason,
-      "deprecation_replacement"         => deprecation_replacement,
       "deprecation_replacement_formula" => deprecation_replacement_formula,
       "deprecation_replacement_cask"    => deprecation_replacement_cask,
       "disabled"                        => disabled?,
       "disable_date"                    => disable_date,
       "disable_reason"                  => disable_reason,
-      "disable_replacement"             => disable_replacement,
       "disable_replacement_formula"     => disable_replacement_formula,
       "disable_replacement_cask"        => disable_replacement_cask,
       "post_install_defined"            => post_install_defined?,
@@ -4370,8 +4354,8 @@ class Formula
       ).void
     }
     def deprecate!(date:, because:, replacement: nil, replacement_formula: nil, replacement_cask: nil)
-      if replacement_formula && replacement_cask
-        raise ArgumentError, "replacement_formula and replacement_cask specified!"
+      if [replacement, replacement_formula, replacement_cask].filter_map(&:presence).length > 1
+        raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
       # TODO: deprecate in >= 4.5.0
@@ -4387,9 +4371,8 @@ class Formula
       return if T.must(@deprecation_date) > Date.today
 
       @deprecation_reason = T.let(because, T.any(NilClass, String, Symbol))
-      @deprecation_replacement = T.let(replacement, T.nilable(String))
-      @deprecation_replacement_formula = T.let(replacement_formula, T.nilable(String))
-      @deprecation_replacement_cask = T.let(replacement_cask, T.nilable(String))
+      @deprecation_replacement_formula = T.let(replacement_formula.presence || replacement, T.nilable(String))
+      @deprecation_replacement_cask = T.let(replacement_cask.presence || replacement, T.nilable(String))
       T.must(@deprecated = T.let(true, T.nilable(T::Boolean)))
     end
 
@@ -4414,13 +4397,6 @@ class Formula
     # @see .deprecate!
     sig { returns(T.any(NilClass, String, Symbol)) }
     attr_reader :deprecation_reason
-
-    # The replacement for a deprecated {Formula}.
-    #
-    # @return [nil] if no replacement was provided or the formula is not deprecated.
-    # @see .deprecate!
-    sig { returns(T.nilable(String)) }
-    attr_reader :deprecation_replacement
 
     # The replacement formula for a deprecated {Formula}.
     #
@@ -4471,8 +4447,8 @@ class Formula
       ).void
     }
     def disable!(date:, because:, replacement: nil, replacement_formula: nil, replacement_cask: nil)
-      if replacement_formula && replacement_cask
-        raise ArgumentError, "replacement_formula and replacement_cask specified!"
+      if [replacement, replacement_formula, replacement_cask].filter_map(&:presence).length > 1
+        raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
       # TODO: deprecate in >= 4.5.0
@@ -4488,17 +4464,15 @@ class Formula
 
       if T.must(@disable_date) > Date.today
         @deprecation_reason = T.let(because, T.any(NilClass, String, Symbol))
-        @deprecation_replacement = T.let(replacement, T.nilable(String))
-        @deprecation_replacement_formula = T.let(replacement_formula, T.nilable(String))
-        @deprecation_replacement_cask = T.let(replacement_cask, T.nilable(String))
+        @deprecation_replacement_formula = T.let(replacement_formula.presence || replacement, T.nilable(String))
+        @deprecation_replacement_cask = T.let(replacement_cask.presence || replacement, T.nilable(String))
         @deprecated = T.let(true, T.nilable(T::Boolean))
         return
       end
 
       @disable_reason = T.let(because, T.nilable(T.any(String, Symbol)))
-      @disable_replacement = T.let(replacement, T.nilable(String))
-      @disable_replacement_formula = T.let(replacement_formula, T.nilable(String))
-      @disable_replacement_cask = T.let(replacement_cask, T.nilable(String))
+      @disable_replacement_formula = T.let(replacement_formula.presence || replacement, T.nilable(String))
+      @disable_replacement_cask = T.let(replacement_cask.presence || replacement, T.nilable(String))
       @disabled = T.let(true, T.nilable(T::Boolean))
     end
 
@@ -4524,13 +4498,6 @@ class Formula
     # @see .disable!
     sig { returns(T.any(NilClass, String, Symbol)) }
     attr_reader :disable_reason
-
-    # The replacement for a disabled {Formula}.
-    # Returns `nil` if no reason was provided or the formula is not disabled.
-    #
-    # @see .disable!
-    sig { returns(T.nilable(String)) }
-    attr_reader :disable_replacement
 
     # The replacement formula for a disabled {Formula}.
     # Returns `nil` if no reason was provided or the formula is not disabled.

@@ -90,14 +90,12 @@ module Cask
       :deprecated?,
       :deprecation_date,
       :deprecation_reason,
-      :deprecation_replacement,
       :deprecation_replacement_formula,
       :deprecation_replacement_cask,
       :disable!,
       :disabled?,
       :disable_date,
       :disable_reason,
-      :disable_replacement,
       :disable_replacement_formula,
       :disable_replacement_cask,
       :discontinued?, # TODO: remove once discontinued? is removed (4.5.0)
@@ -114,9 +112,8 @@ module Cask
 
     include OnSystem::MacOSAndLinux
 
-    attr_reader :cask, :token, :deprecation_date, :deprecation_reason, :deprecation_replacement,
-                :deprecation_replacement_formula, :deprecation_replacement_caks, :disable_date,
-                :disable_reason, :disable_replacement, :disable_replacement_formula,
+    attr_reader :cask, :token, :deprecation_date, :deprecation_reason, :deprecation_replacement_formula,
+                :deprecation_replacement_cask, :disable_date, :disable_reason, :disable_replacement_formula,
                 :disable_replacement_cask, :on_system_block_min_os
 
     def initialize(cask)
@@ -533,8 +530,8 @@ module Cask
     #
     # @api public
     def deprecate!(date:, because:, replacement: nil, replacement_formula: nil, replacement_cask: nil)
-      if replacement_formula && replacement_cask
-        raise ArgumentError, "replacement_formula and replacement_cask specified!"
+      if [replacement, replacement_formula, replacement_cask].filter_map(&:presence).length > 1
+        raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
       # TODO: deprecate in >= 4.5.0
@@ -550,9 +547,8 @@ module Cask
       return if @deprecation_date > Date.today
 
       @deprecation_reason = because
-      @deprecation_replacement = replacement
-      @deprecation_replacement_formula = replacement_formula
-      @deprecation_replacement_cask = replacement_cask
+      @deprecation_replacement_formula = replacement_formula.presence || replacement
+      @deprecation_replacement_cask = replacement_cask.presence || replacement
       @deprecated = true
     end
 
@@ -562,8 +558,8 @@ module Cask
     #
     # @api public
     def disable!(date:, because:, replacement: nil, replacement_formula: nil, replacement_cask: nil)
-      if replacement_formula && replacement_cask
-        raise ArgumentError, "replacement_formula and replacement_cask specified!"
+      if [replacement, replacement_formula, replacement_cask].filter_map(&:presence).length > 1
+        raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
       # TODO: deprecate in >= 4.5.0
@@ -579,17 +575,15 @@ module Cask
 
       if @disable_date > Date.today
         @deprecation_reason = because
-        @deprecation_replacement = replacement
-        @deprecation_replacement_formula = replacement_formula
-        @deprecation_replacement_cask = replacement_cask
+        @deprecation_replacement_formula = replacement_formula.presence || replacement
+        @deprecation_replacement_cask = replacement_cask.presence || replacement
         @deprecated = true
         return
       end
 
       @disable_reason = because
-      @disable_replacement = replacement
-      @disable_replacement_formula = replacement_formula
-      @disable_replacement_cask = replacement_cask
+      @disable_replacement_formula = replacement_formula.presence || replacement
+      @disable_replacement_cask = replacement_cask.presence || replacement
       @disabled = true
     end
 

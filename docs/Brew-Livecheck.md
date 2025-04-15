@@ -259,51 +259,9 @@ livecheck do
 end
 ```
 
+The strategy's default logic skips releases marked as draft or pre-release but this can be modified by using a `strategy` block. Removing the `release["prerelease"]` condition from the previous example would allow us to work with pre-release releases, though the regex may also need to be adapted to handle unstable version formats.
+
 You can find more information on the response JSON from this API endpoint in the related [GitHub REST API documentation](https://docs.github.com/en/rest/releases/releases?apiVersion=latest#list-releases).
-
-### Handling Temporary Pre-Release Versions from GitHub
-
-Some packages temporarily need to use pre-release versions (e.g., beta, RC) following the [documented exception](https://docs.brew.sh/Acceptable-Casks#but-there-is-no-stable-version) for software without a stable release. This requires a special livecheck configuration that differs from the standard GitHub strategies.
-
-Unlike the regular `GithubReleases` example above (which filters out pre-release versions), this configuration specifically includes and matches version strings with pre-release suffixes:
-
-```ruby
-# TODO: Update this to use the `GithubLatest` strategy (without a regex or
-# `strategy` block) when a stable version becomes available.
-livecheck do
-  url :url
-  regex(/^v?(\d+(?:\.\d+)+.+)$/i)  # Note the .+ to match version suffixes
-  strategy :github_releases do |json, regex|
-    json.filter_map do |release|
-      next if release["draft"]
-      # Intentionally NOT filtering pre-releases with: next if release["prerelease"]
-
-      match = release["tag_name"]&.match(regex)
-      next if match.blank?
-
-      match[1]
-    end
-  end
-end
-```
-
-This specialized configuration:
-
-1. Uses `url :url` to reference the primary URL, which the GitHub strategies will convert to the appropriate API endpoint
-2. Includes a regex that **specifically allows version strings with suffixes** (like `-beta`, `-rc.1`)
-3. Uses a `strategy` block that:
-   - Filters out draft releases but keeps pre-releases
-   - Matches the tag name against the regex
-   - Returns the captured version string including any pre-release suffixes
-
-**Important:** This configuration is intended to be temporary. When a stable version becomes available, the formula or cask should be updated to use a simpler approach:
-
-```ruby
-livecheck do
-  url :url
-  strategy :github_latest
-end
-```
 
 #### `Crate` `strategy` block
 

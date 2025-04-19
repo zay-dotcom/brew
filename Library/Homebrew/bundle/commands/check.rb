@@ -1,4 +1,4 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
+# typed: strict
 # frozen_string_literal: true
 
 require "bundle/checker"
@@ -7,6 +7,10 @@ module Homebrew
   module Bundle
     module Commands
       module Check
+        sig {
+          params(global: T::Boolean, file: T.nilable(String), no_upgrade: T::Boolean, verbose: T::Boolean,
+                 quiet: T::Boolean).void
+        }
         def self.run(global: false, file: nil, no_upgrade: false, verbose: false, quiet: false)
           output_errors = verbose
           exit_on_first_error = !verbose

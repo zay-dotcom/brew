@@ -6285,7 +6285,7 @@ class RuboCop::AST::ProcessedSource
   # source://rubocop-ast//lib/rubocop/ast/processed_source.rb#77
   def lines; end
 
-  # source://rubocop-md/2.0.0/lib/rubocop/markdown/rubocop_ext.rb#85
+  # source://rubocop-md/2.0.1/lib/rubocop/markdown/rubocop_ext.rb#85
   def parse(src, *args); end
 
   # Returns the value of attribute parser_engine.

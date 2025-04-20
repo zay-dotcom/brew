@@ -23,6 +23,13 @@ definition.resolve.for(definition.current_dependencies).each do |spec|
   next if name == "sorbet-static"
   next if name == "sorbet-static-and-runtime"
 
+  # The RuboCop RBI file was too big, so let's slim it down to only what we use.
+  if name == "rubocop"
+    require "rubocop/cop/base"
+    require "rubocop/cop/style/mutable_constant"
+    next
+  end
+
   name = dependency_require_map[name] if dependency_require_map.key?(name)
   require name
   additional_requires_map[name]&.each { require(_1) }

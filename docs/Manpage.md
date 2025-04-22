@@ -2136,6 +2136,10 @@ displays whether a pull request has been opened with the URL.
 
 : Letter or word that the list of package results should alphabetically follow.
 
+`--bump-synced`
+
+: Bump additional formulae marked as synced with the given formulae.
+
 ### `bump-cask-pr` \[*`options`*\] *`cask`*
 
 Create a pull request to update *`cask`* with a new version.

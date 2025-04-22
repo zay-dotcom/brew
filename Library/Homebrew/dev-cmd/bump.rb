@@ -53,8 +53,6 @@ module Homebrew
                description: "Open a pull request for the new version if none have been opened yet."
         flag   "--start-with=",
                description: "Letter or word that the list of package results should alphabetically follow."
-        switch "--bump-synced",
-               description: "Bump additional formulae marked as synced with the given formulae."
 
         conflicts "--cask", "--formula"
         conflicts "--tap=", "--installed"
@@ -472,12 +470,10 @@ module Homebrew
         EOS
         if formula_or_cask.is_a?(Formula) && formula_or_cask.synced_with_other_formulae?
           outdated_synced_formulae = synced_with(formula_or_cask, new_version.general)
-          if !args.bump_synced? && outdated_synced_formulae.present?
-            puts <<~EOS
-              Version syncing:          #{title_name} version should be kept in sync with
-                                        #{outdated_synced_formulae.join(", ")}.
-            EOS
-          end
+          puts <<~EOS if outdated_synced_formulae.present?
+            Version syncing:          #{title_name} version should be kept in sync with
+                                      #{outdated_synced_formulae.join(", ")}.
+          EOS
         end
         if !args.no_pull_requests? &&
            (new_version.general != "unable to get versions") &&
@@ -523,7 +519,7 @@ module Homebrew
           "--version=#{new_version.general}"
         end
 
-        bump_pr_args = [
+        bump_cask_pr_args = [
           "bump-#{version_info.type}-pr",
           name,
           *version_args,
@@ -531,13 +527,9 @@ module Homebrew
           "--message=Created by `brew bump`",
         ]
 
-        bump_pr_args << "--no-fork" if args.no_fork?
+        bump_cask_pr_args << "--no-fork" if args.no_fork?
 
-        if args.bump_synced? && outdated_synced_formulae.present?
-          bump_pr_args << "--bump-synced=#{outdated_synced_formulae.join(",")}"
-        end
-
-        system HOMEBREW_BREW_FILE, *bump_pr_args
+        system HOMEBREW_BREW_FILE, *bump_cask_pr_args
       end
 
       sig {

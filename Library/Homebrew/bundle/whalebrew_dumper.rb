@@ -11,7 +11,7 @@ module Homebrew
       def self.images
         return [] unless Bundle.whalebrew_installed?
 
-        # odeprecated "`brew bundle` `whalebrew` support", "using `whalebrew` directly"
+        odeprecated "`brew bundle` `whalebrew` support", "using `whalebrew` directly"
         @images ||= `whalebrew list 2>/dev/null`.split("\n")
                                                 .reject { |line| line.start_with?("COMMAND ") }
                                                 .map { |line| line.split(/\s+/).last }

@@ -178,7 +178,7 @@ class Resource
   # and `false` otherwise.
   sig { returns(T::Boolean) }
   def livecheckable?
-    # odeprecated "`livecheckable?`", "`livecheck_defined?`"
+    odeprecated "`livecheckable?`", "`livecheck_defined?`"
     @livecheck_defined == true
   end
 

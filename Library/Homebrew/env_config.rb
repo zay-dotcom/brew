@@ -556,7 +556,7 @@ module Homebrew
 
           falsy_values = %w[false no off nil 0]
           if falsy_values.include?(env_value&.downcase)
-            odeprecated "#{env}=#{env_value}", <<~EOS.chomp
+            odisabled "#{env}=#{env_value}", <<~EOS.chomp
               #{env}=1 to enable and #{env}= (an empty value) to disable
             EOS
           end

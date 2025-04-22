@@ -306,4 +306,15 @@ jobs:
             image_args+=("ghcr.io/homebrew/ubuntu${VERSION}@sha256:$(<"${RUNNER_TEMP}/digests/${VERSION}-arm64")")
           fi
 
-          docker buildx imagetools create "${tag_args[@]}" "${image_args[@]}"
+          attempts=0
+          until docker buildx imagetools create "${tag_args[@]}" "${image_args[@]}"; do
+            attempts=$((attempts + 1))
+            if [[ $attempts -ge 3 ]]; then
+              echo "[$(date -u)] ERROR: Failed after 3 attempts." >&2
+              exit 1
+            fi
+            delay=$((2 ** attempts))
+            if [[ $delay -gt 15 ]]; then delay=15; fi
+            echo "Push failed (attempt $attempts). Retrying in ${delay} seconds..."
+            sleep ${delay}
+          done

@@ -399,6 +399,7 @@ __fish_brew_complete_arg 'bottle' -a '(__fish_brew_suggest_formulae_installed)'
 
 
 __fish_brew_complete_cmd 'bump' 'Displays out-of-date packages and the latest version available'
+__fish_brew_complete_arg 'bump' -l bump-synced -d 'Bump additional formulae marked as synced with the given formulae'
 __fish_brew_complete_arg 'bump' -l cask -d 'Check only casks'
 __fish_brew_complete_arg 'bump' -l debug -d 'Display any debugging information'
 __fish_brew_complete_arg 'bump' -l eval-all -d 'Evaluate all formulae and casks'
@@ -467,7 +468,6 @@ __fish_brew_complete_arg 'bump-formula-pr' -l url -d 'Specify the URL for the ne
 __fish_brew_complete_arg 'bump-formula-pr' -l verbose -d 'Make some output more verbose'
 __fish_brew_complete_arg 'bump-formula-pr' -l version -d 'Use the specified version to override the value parsed from the URL or tag. Note that `--version=0` can be used to delete an existing version override from a formula if it has become redundant'
 __fish_brew_complete_arg 'bump-formula-pr' -l write-only -d 'Make the expected file modifications without taking any Git actions'
-__fish_brew_complete_arg 'bump-formula-pr' -a '(__fish_brew_suggest_formulae_all)'
 
 
 __fish_brew_complete_cmd 'bump-revision' 'Create a commit to increment the revision of formula'

@@ -2136,6 +2136,10 @@ displays whether a pull request has been opened with the URL.
 
 : Letter or word that the list of package results should alphabetically follow.
 
+`--bump-synced`
+
+: Bump additional formulae marked as synced with the given formulae.
+
 ### `bump-cask-pr` \[*`options`*\] *`cask`*
 
 Create a pull request to update *`cask`* with a new version.
@@ -2200,7 +2204,7 @@ supplied by the user.
 
 : Use the specified GitHub organization for forking.
 
-### `bump-formula-pr` \[*`options`*\] \[*`formula`*\]
+### `bump-formula-pr` \[*`options`*\] \[*`named_formula`*\]
 
 Create a pull request to update *`formula`* with a new URL or a new tag.
 

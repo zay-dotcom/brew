@@ -508,6 +508,7 @@ _brew_bump() {
   case "${cur}" in
     -*)
       __brewcomp "
+      --bump-synced
       --cask
       --debug
       --eval-all
@@ -599,7 +600,6 @@ _brew_bump_formula_pr() {
       ;;
     *) ;;
   esac
-  __brew_complete_formulae
 }
 
 _brew_bump_revision() {

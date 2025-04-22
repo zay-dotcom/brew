@@ -310,9 +310,11 @@ jobs:
           until docker buildx imagetools create "${tag_args[@]}" "${image_args[@]}"; do
             attempts=$((attempts + 1))
             if [[ $attempts -ge 3 ]]; then
-              echo "[$(date -u)] ERROR: Failed after 3 attempts."
+              echo "[$(date -u)] ERROR: Failed after 3 attempts." >&2
               exit 1
             fi
-            echo "Push failed (attempt $attempts). Retrying in $((attempts * 5)) seconds..."
-            sleep $((attempts * 5))
+            delay=$((2 ** attempts))
+            if [[ $delay -gt 60 ]]; then delay=60; fi
+            echo "Push failed (attempt $attempts). Retrying in ${delay} seconds..."
+            sleep ${delay}
           done

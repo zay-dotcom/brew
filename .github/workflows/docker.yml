@@ -314,7 +314,7 @@ jobs:
               exit 1
             fi
             delay=$((2 ** attempts))
-            if [[ $delay -gt 60 ]]; then delay=60; fi
+            if [[ $delay -gt 15 ]]; then delay=15; fi
             echo "Push failed (attempt $attempts). Retrying in ${delay} seconds..."
             sleep ${delay}
           done

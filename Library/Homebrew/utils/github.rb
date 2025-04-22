@@ -713,34 +713,33 @@ module GitHub
     tap_remote_repo = info[:tap_remote_repo] || tap.full_name
     pr_message = info[:pr_message]
     pr_title = info[:pr_title]
-
     commits = info[:commits]
-    username = tap.user
 
     remote_url = Utils.popen_read("git", "remote", "get-url", "--push", "origin").chomp
+    username = tap.user
 
     tap.path.cd do
+      if args.no_fork?
+        remote_url = Utils.popen_read("git", "remote", "get-url", "--push", "origin").chomp
+        username = tap.user
+        add_auth_token_to_url!(remote_url)
+      else
+        begin
+          remote_url, username = forked_repo_info!(tap_remote_repo, org: args.fork_org)
+        rescue *API::ERRORS => e
+          commits.each do |commit|
+            commit[:sourcefile_path].atomic_write(commit[:old_contents])
+          end
+          odie "Unable to fork: #{e.message}!"
+        end
+      end
+
+      next if args.dry_run?
+
       require "utils/popen"
       git_dir = Utils.popen_read("git", "rev-parse", "--git-dir").chomp
       shallow = !git_dir.empty? && File.exist?("#{git_dir}/shallow")
-      unless args.commit?
-        if args.no_fork?
-          remote_url = Utils.popen_read("git", "remote", "get-url", "--push", "origin").chomp
-          add_auth_token_to_url!(remote_url)
-          username = tap.user
-        else
-          begin
-            forked_repo_info!(tap_remote_repo, org: args.fork_org)
-          rescue *API::ERRORS => e
-            commits.each do |commit|
-              commit[:sourcefile_path].atomic_write(commit[:old_contents])
-            end
-            odie "Unable to fork: #{e.message}!"
-          end
-        end
-
-        safe_system "git", "fetch", "--unshallow", "origin" if shallow
-      end
+      safe_system "git", "fetch", "--unshallow", "origin" if !args.commit? && shallow
       safe_system "git", "checkout", "--no-track", "-b", branch, "#{remote}/#{remote_branch}" unless args.commit?
       Utils::Git.set_name_email!
     end
@@ -758,14 +757,6 @@ module GitHub
         changed_files += additional_files if additional_files.present?
 
         if args.dry_run? || (args.write_only? && !args.commit?)
-          remote_url = if args.no_fork?
-            Utils.popen_read("git", "remote", "get-url", "--push", "origin").chomp
-          else
-            fork_message = "try to fork repository with GitHub API" \
-                           "#{" into `#{args.fork_org}` organization" if args.fork_org}"
-            ohai fork_message
-            "FORK_URL"
-          end
           ohai "git checkout --no-track -b #{branch} #{remote}/#{remote_branch}"
           ohai "git fetch --unshallow origin" if shallow
           ohai "git add #{changed_files.join(" ")}"
@@ -784,7 +775,7 @@ module GitHub
       end
     end
 
-    return if args.commit?
+    return if args.commit? || args.dry_run?
 
     tap.path.cd do
       system_command!("git", args:         ["push", "--set-upstream", remote_url, "#{branch}:#{branch}"],

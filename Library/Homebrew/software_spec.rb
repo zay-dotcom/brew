@@ -154,11 +154,6 @@ class SoftwareSpec
     end
   end
 
-  def go_resource(name, &block)
-    odisabled "`SoftwareSpec#go_resource`", "Go modules"
-    resource name, Resource::Go, &block
-  end
-
   def option_defined?(name)
     options.include?(name)
   end

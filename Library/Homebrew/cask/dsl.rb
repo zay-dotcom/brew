@@ -489,11 +489,6 @@ module Cask
       @caveats
     end
 
-    def discontinued?
-      odisabled "`discontinued?`", "`deprecated?` or `disabled?`"
-      @caveats&.discontinued? == true
-    end
-
     # Asserts that the cask artifacts auto-update.
     #
     # @api public
@@ -520,7 +515,7 @@ module Cask
     # for `#livecheck_defined?`.
     sig { returns(T::Boolean) }
     def livecheckable?
-      # odeprecated "`livecheckable?`", "`livecheck_defined?`"
+      odeprecated "`livecheckable?`", "`livecheck_defined?`"
       @livecheck_defined == true
     end
 
@@ -534,14 +529,12 @@ module Cask
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
-      # TODO: deprecate in >= 4.5.0
-      # if replacement
-      #   odeprecated(
-      #     "deprecate!(:replacement)",
-      #     "deprecate!(:replacement_formula) or deprecate!(:replacement_cask)",
-      #     disable_on: Time.new(2025, 10, 15),
-      #   )
-      # end
+      if replacement
+        odeprecated(
+          "deprecate!(:replacement)",
+          "deprecate!(:replacement_formula) or deprecate!(:replacement_cask)",
+        )
+      end
 
       @deprecation_date = Date.parse(date)
       return if @deprecation_date > Date.today
@@ -562,14 +555,12 @@ module Cask
         raise ArgumentError, "more than one of replacement, replacement_formula and/or replacement_cask specified!"
       end
 
-      # TODO: deprecate in >= 4.5.0
-      # if replacement
-      #   odeprecated(
-      #     "disable!(:replacement)",
-      #     "disable!(:replacement_formula) or disable!(:replacement_cask)",
-      #     disable_on: Time.new(2025, 10, 15),
-      #   )
-      # end
+      if replacement
+        odeprecated(
+          "disable!(:replacement)",
+          "disable!(:replacement_formula) or disable!(:replacement_cask)",
+        )
+      end
 
       @disable_date = Date.parse(date)
 

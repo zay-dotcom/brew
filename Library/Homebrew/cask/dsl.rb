@@ -149,7 +149,6 @@ module Cask
       @name = T.let([], T::Array[String])
       @on_system_blocks_exist = T.let(false, T::Boolean)
       @os = T.let(nil, T.nilable(String))
-      @token = cask.token
       @on_system_block_min_os = T.let(nil, T.nilable(MacOSVersion))
       @sha256 = T.let(nil, T.nilable(T.any(Checksum, Symbol)))
       @staged_path = T.let(nil, T.nilable(Pathname))

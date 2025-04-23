@@ -373,6 +373,7 @@ module Cask
         "version"                         => version,
         "autobump"                        => autobump?,
         "no_autobump_message"             => no_autobump_message,
+        "skip_livecheck"                  => livecheck.skip?,
         "installed"                       => installed_version,
         "installed_time"                  => install_time&.to_i,
         "bundle_version"                  => bundle_long_version,

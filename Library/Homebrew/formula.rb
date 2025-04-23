@@ -2500,6 +2500,7 @@ class Formula
       "version_scheme"                  => version_scheme,
       "autobump"                        => autobump?,
       "no_autobump_message"             => no_autobump_message,
+      "skip_livecheck"                  => livecheck.skip?,
       "bottle"                          => {},
       "pour_bottle_only_if"             => self.class.pour_bottle_only_if&.to_s,
       "keg_only"                        => keg_only?,

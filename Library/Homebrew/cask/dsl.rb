@@ -119,10 +119,15 @@ module Cask
 
     sig { params(cask: Cask).void }
     def initialize(cask)
+      # NOTE: Variables set by `set_unique_stanza` must be initialized to `nil`.
+      @auto_updates = T.let(nil, T.nilable(T::Boolean))
+      @arch = T.let(nil, T.nilable(String))
       @artifacts = T.let(ArtifactSet.new, ArtifactSet)
       @called_in_on_system_block = T.let(false, T::Boolean)
       @cask = T.let(cask, Cask)
       @caveats = T.let(DSL::Caveats.new(cask), DSL::Caveats)
+      @conflicts_with = T.let(nil, T.nilable(DSL::ConflictsWith))
+      @container = T.let(nil, T.nilable(DSL::Container))
       @depends_on = T.let(DSL::DependsOn.new, DSL::DependsOn)
       @depends_on_set_in_block = T.let(false, T::Boolean)
       @deprecated = T.let(false, T::Boolean)
@@ -130,21 +135,27 @@ module Cask
       @deprecation_reason = T.let(nil, T.nilable(T.any(String, Symbol)))
       @deprecation_replacement_cask = T.let(nil, T.nilable(String))
       @deprecation_replacement_formula = T.let(nil, T.nilable(String))
+      @desc = T.let(nil, T.nilable(String))
       @disable_date = T.let(nil, T.nilable(Date))
       @disable_reason = T.let(nil, T.nilable(T.any(String, Symbol)))
       @disable_replacement_cask = T.let(nil, T.nilable(String))
       @disable_replacement_formula = T.let(nil, T.nilable(String))
       @disabled = T.let(false, T::Boolean)
+      @homepage = T.let(nil, T.nilable(String))
       @language_blocks = T.let({}, T::Hash[T::Array[String], Proc])
       @language_eval = T.let(nil, T.nilable(String))
       @livecheck = T.let(Livecheck.new(cask), Livecheck)
       @livecheck_defined = T.let(false, T::Boolean)
       @name = T.let([], T::Array[String])
       @on_system_blocks_exist = T.let(false, T::Boolean)
+      @os = T.let(nil, T.nilable(String))
       @token = cask.token
       @on_system_block_min_os = T.let(nil, T.nilable(MacOSVersion))
+      @sha256 = T.let(nil, T.nilable(T.any(Checksum, Symbol)))
       @staged_path = T.let(nil, T.nilable(Pathname))
       @token = T.let(cask.token, String)
+      @url = T.let(nil, T.nilable(URL))
+      @version = T.let(nil, T.nilable(DSL::Version))
     end
 
     sig { returns(T::Boolean) }
@@ -196,7 +207,7 @@ module Cask
       return instance_variable_get(:"@#{stanza}") if should_return
 
       unless @cask.allow_reassignment
-        if instance_variable_defined?(:"@#{stanza}") && !@called_in_on_system_block
+        if !instance_variable_get(:"@#{stanza}").nil? && !@called_in_on_system_block
           raise CaskInvalidError.new(cask, "'#{stanza}' stanza may only appear once.")
         end
 

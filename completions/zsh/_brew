@@ -534,6 +534,7 @@ _brew_bottle() {
 # brew bump
 _brew_bump() {
   _arguments \
+    '--bump-synced[Bump additional formulae marked as synced with the given formulae]' \
     '--debug[Display any debugging information]' \
     '(--installed)--eval-all[Evaluate all formulae and casks]' \
     '--full-name[Print formulae/casks with fully-qualified names]' \
@@ -663,7 +664,7 @@ _brew_bundle() {
     '--no-upgrade[`install` does not run `brew upgrade` on outdated dependencies. `check` does not check for outdated dependencies. Note they may still be upgraded by `brew install` if needed. This is enabled by default if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set]' \
     '(--all --vscode)--no-vscode[`dump` without VSCode (and forks/variants) extensions. This is enabled by default if `$HOMEBREW_BUNDLE_DUMP_NO_VSCODE` is set]' \
     '--quiet[Make some output more quiet]' \
-    '--services[Temporarily start services while running the `exec` or `sh` command]' \
+    '--services[Temporarily start services while running the `exec` or `sh` command. This is enabled by default if `$HOMEBREW_BUNDLE_SERVICES` is set]' \
     '--tap[`list` or `dump` Homebrew tap dependencies]' \
     '(--install)--upgrade[`install` runs `brew upgrade` on outdated dependencies, even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set]' \
     '--upgrade-formulae[`install` runs `brew upgrade` on any of these comma-separated formulae, even if `$HOMEBREW_BUNDLE_NO_UPGRADE` is set]' \

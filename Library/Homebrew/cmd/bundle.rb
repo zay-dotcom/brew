@@ -87,7 +87,9 @@ module Homebrew
         switch "--install",
                description: "Run `install` before continuing to other operations e.g. `exec`."
         switch "--services",
-               description: "Temporarily start services while running the `exec` or `sh` command."
+               env:         :bundle_services,
+               description: "Temporarily start services while running the `exec` or `sh` command. " \
+                            "This is enabled by default if `$HOMEBREW_BUNDLE_SERVICES` is set."
         switch "-f", "--force",
                description: "`install` runs with `--force`/`--overwrite`. " \
                             "`dump` overwrites an existing `Brewfile`. " \

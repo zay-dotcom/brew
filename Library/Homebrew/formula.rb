@@ -4210,7 +4210,9 @@ class Formula
     end
 
     sig { returns(T::Boolean) }
-    def autobump? = @autobump == true
+    def autobump?
+      @autobump != false # @autobump may be `nil`
+    end
 
     sig { returns(T::Boolean) }
     def no_autobump_defined? = @no_autobump_defined == true

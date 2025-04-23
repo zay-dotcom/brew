@@ -213,6 +213,9 @@ class Formula
   sig { returns(T::Boolean) }
   attr_accessor :follow_installed_alias
 
+  sig { returns(T.nilable(String)) }
+  attr_reader :no_autobump_message
+
   alias follow_installed_alias? follow_installed_alias
 
   # Whether or not to force the use of a bottle.
@@ -241,6 +244,9 @@ class Formula
     @version_scheme = T.let(self.class.version_scheme || 0, Integer)
     @head = T.let(nil, T.nilable(SoftwareSpec))
     @stable = T.let(nil, T.nilable(SoftwareSpec))
+
+    @autobump = T.let(true, T::Boolean)
+    @no_autobump_message = T.let(nil, T.nilable(String))
 
     @force_bottle = T.let(force_bottle, T::Boolean)
 
@@ -473,6 +479,14 @@ class Formula
   # @!method livecheckable?
   # @see .livecheckable?
   delegate livecheckable?: :"self.class"
+
+  delegate no_autobump!: :"self.class"
+
+  delegate autobump?: :"self.class"
+
+  delegate no_autobump_defined?: :"self.class"
+
+  delegate no_autobump_message: :"self.class"
 
   # Is a service specification defined for the software?
   # @!method service?
@@ -2484,6 +2498,8 @@ class Formula
       "urls"                            => urls_hash,
       "revision"                        => revision,
       "version_scheme"                  => version_scheme,
+      "autobump"                        => autobump?,
+      "no_autobump_message"             => no_autobump_message,
       "bottle"                          => {},
       "pour_bottle_only_if"             => self.class.pour_bottle_only_if&.to_s,
       "keg_only"                        => keg_only?,
@@ -4181,6 +4197,25 @@ class Formula
       @livecheck_defined = T.let(true, T.nilable(T::Boolean))
       @livecheck.instance_eval(&block)
     end
+
+    # Method that excludes the formula from the autobump list.
+    #
+    # @api public
+    sig { params(because: String).returns(T.untyped) }
+    def no_autobump!(because:)
+      @no_autobump_defined = T.let(true, T.nilable(T::Boolean))
+      @no_autobump_message = T.let(because, T.nilable(String))
+      @autobump = T.let(false, T.nilable(T::Boolean))
+    end
+
+    sig { returns(T::Boolean) }
+    def autobump? = @autobump == true
+
+    sig { returns(T::Boolean) }
+    def no_autobump_defined? = @no_autobump_defined == true
+
+    sig { returns(T.nilable(String)) }
+    attr_reader :no_autobump_message
 
     # Service can be used to define services.
     # This method evaluates the DSL specified in the service block of the

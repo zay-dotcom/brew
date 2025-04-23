@@ -102,6 +102,10 @@ module Cask
       :livecheck,
       :livecheck_defined?,
       :livecheckable?, # TODO: remove once `#livecheckable?` is removed
+      :no_autobump!,
+      :autobump?,
+      :no_autobump_defined?,
+      :no_autobump_message,
       :on_system_blocks_exist?,
       :on_system_block_min_os,
       :depends_on_set_in_block?,
@@ -112,7 +116,7 @@ module Cask
 
     include OnSystem::MacOSAndLinux
 
-    attr_reader :cask, :token, :artifacts, :deprecation_date, :deprecation_reason,
+    attr_reader :cask, :token, :no_autobump_message, :artifacts, :deprecation_date, :deprecation_reason,
                 :deprecation_replacement_cask, :deprecation_replacement_formula,
                 :disable_date, :disable_reason, :disable_replacement_cask,
                 :disable_replacement_formula, :on_system_block_min_os
@@ -147,6 +151,8 @@ module Cask
       @livecheck = T.let(Livecheck.new(cask), Livecheck)
       @livecheck_defined = T.let(false, T::Boolean)
       @name = T.let([], T::Array[String])
+      @autobump = T.let(true, T::Boolean)
+      @no_autobump_defined = T.let(false, T::Boolean)
       @on_system_blocks_exist = T.let(false, T::Boolean)
       @os = T.let(nil, T.nilable(String))
       @on_system_block_min_os = T.let(nil, T.nilable(MacOSVersion))
@@ -538,6 +544,26 @@ module Cask
     def livecheckable?
       odeprecated "`livecheckable?`", "`livecheck_defined?`"
       @livecheck_defined == true
+    end
+
+    def no_autobump!(because:)
+      raise ArgumentError, "`because` argument must be a string!" unless because.is_a?(String)
+
+      if !@cask.allow_reassignment && @no_autobump_defined
+        raise CaskInvalidError.new(cask, "'no_autobump_defined' stanza may only appear once.")
+      end
+
+      @no_autobump_defined = true
+      @no_autobump_message = because
+      @autobump = false
+    end
+
+    def autobump?
+      @autobump == true
+    end
+
+    def no_autobump_defined?
+      @no_autobump_defined == true
     end
 
     # Declare that a cask is no longer functional or supported.

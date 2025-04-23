@@ -371,6 +371,8 @@ module Cask
         "url"                             => url,
         "url_specs"                       => url_specs,
         "version"                         => version,
+        "autobump"                        => autobump?,
+        "no_autobump_message"             => no_autobump_message,
         "installed"                       => installed_version,
         "installed_time"                  => install_time&.to_i,
         "bundle_version"                  => bundle_long_version,

@@ -291,6 +291,10 @@ module Formulary
         end
       end
 
+      if (no_autobump_msg = json_formula["no_autobump_msg"])
+        no_autobump! because: no_autobump_msg
+      end
+
       bottles_stable = json_formula["bottle"]["stable"].presence
 
       if bottles_stable

@@ -157,7 +157,7 @@ RSpec.describe Cask::DSL, :cask do
 
   describe "no_autobump! stanze" do
     it "returns true if no_autobump! is not set" do
-      expect(cask.autobump?).to eq(true)
+      expect(cask.autobump?).to be(true)
     end
 
     context "when no_autobump! is set" do
@@ -166,8 +166,9 @@ RSpec.describe Cask::DSL, :cask do
           no_autobump! because: "some reason"
         end
       end
+
       it "returns false" do
-        expect(cask.autobump?).to eq(false)
+        expect(cask.autobump?).to be(false)
         expect(cask.no_autobump_message).to eq("some reason")
       end
     end

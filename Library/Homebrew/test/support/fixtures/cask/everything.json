@@ -17,7 +17,7 @@
   },
   "version": "1.2.3",
   "autobump": true,
-  "no_autobump_msg": null,
+  "no_autobump_message": null,
   "installed": null,
   "installed_time": null,
   "bundle_version": null,

@@ -399,6 +399,7 @@ __fish_brew_complete_arg 'bottle' -a '(__fish_brew_suggest_formulae_installed)'
 
 
 __fish_brew_complete_cmd 'bump' 'Displays out-of-date packages and the latest version available'
+__fish_brew_complete_arg 'bump' -l bump-synced -d 'Bump additional formulae marked as synced with the given formulae'
 __fish_brew_complete_arg 'bump' -l cask -d 'Check only casks'
 __fish_brew_complete_arg 'bump' -l debug -d 'Display any debugging information'
 __fish_brew_complete_arg 'bump' -l eval-all -d 'Evaluate all formulae and casks'

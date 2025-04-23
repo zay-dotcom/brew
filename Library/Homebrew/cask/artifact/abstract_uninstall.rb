@@ -4,6 +4,7 @@
 require "timeout"
 
 require "utils/user"
+require "utils/uid"
 require "cask/artifact/abstract_artifact"
 require "cask/pkg"
 require "extend/hash/keys"
@@ -74,7 +75,12 @@ module Cask
 
         args = directives[directive_sym]
 
-        send(:"uninstall_#{directive_sym}", *(args.is_a?(Hash) ? [args] : args), **options)
+        ::Utils::UID.drop_euid do
+          env = { HOME: ::Utils::UID.uid_home }.compact
+          with_env(env) do
+            send(:"uninstall_#{directive_sym}", *(args.is_a?(Hash) ? [args] : args), **options)
+          end
+        end
       end
 
       def stanza

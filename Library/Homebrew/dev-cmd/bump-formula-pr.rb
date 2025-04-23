@@ -443,7 +443,7 @@ module Homebrew
           "#{Array(args.bump_synced).join(" ")} #{new_formula_version}"
         end
 
-        pr_message = "Created by `brew bump-formula-pr`."
+        pr_message = "Created with `brew bump-formula-pr`."
         commits.each do |commit|
           next if commit[:formula_pr_message].empty?
 

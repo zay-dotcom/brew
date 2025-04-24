@@ -214,7 +214,11 @@ class Formula
   sig { returns(T::Boolean) }
   attr_accessor :follow_installed_alias
 
-  sig { returns(T.nilable(String)) }
+  # Message that explains why the formula was excluded from autobump list.
+  # Returns `nil` if no message is specified.
+  #
+  # @see .no_autobump!
+  sig { returns(T.nilable(T.any(String, Symbol))) }
   attr_reader :no_autobump_message
 
   alias follow_installed_alias? follow_installed_alias
@@ -247,7 +251,7 @@ class Formula
     @stable = T.let(nil, T.nilable(SoftwareSpec))
 
     @autobump = T.let(true, T::Boolean)
-    @no_autobump_message = T.let(nil, T.nilable(String))
+    @no_autobump_message = T.let(nil, T.nilable(T.any(String, Symbol)))
 
     @force_bottle = T.let(force_bottle, T::Boolean)
 
@@ -481,10 +485,19 @@ class Formula
   # @see .livecheckable?
   delegate livecheckable?: :"self.class"
 
+  # Exclude the formula from autobump list.
+  # @!method no_autobump!
+  # @see .no_autobump!
   delegate no_autobump!: :"self.class"
 
+  # Is the formula in autobump list?
+  # @!method autobump?
+  # @see .autobump?
   delegate autobump?: :"self.class"
 
+  # Is no_autobump! method defined?
+  # @!method no_autobump_defined?
+  # @see .no_autobump_defined?
   delegate no_autobump_defined?: :"self.class"
 
   delegate no_autobump_message: :"self.class"
@@ -4202,27 +4215,36 @@ class Formula
 
     # Method that excludes the formula from the autobump list.
     #
+    # TODO: limit this method to the official taps only (f.e. raise
+    # an error if `!tap.official?`)
+    #
     # @api public
-    sig { params(because: T.any(String, Symbol)).returns(T.untyped) }
+    sig { params(because: T.any(String, Symbol)).void }
     def no_autobump!(because:)
       if because.is_a?(Symbol) && !NO_AUTOBUMP_REASONS_LIST.key?(because)
         raise ArgumentError, "'because' argument should use valid symbol or a string!"
       end
 
       @no_autobump_defined = T.let(true, T.nilable(T::Boolean))
-      @no_autobump_message = T.let(because.to_s, T.nilable(String))
+      @no_autobump_message = T.let(because, T.nilable(T.any(String, Symbol)))
       @autobump = T.let(false, T.nilable(T::Boolean))
     end
 
+    # Is the formula in autobump list?
     sig { returns(T::Boolean) }
     def autobump?
       @autobump != false # @autobump may be `nil`
     end
 
+    # Is no_autobump! method defined?
     sig { returns(T::Boolean) }
     def no_autobump_defined? = @no_autobump_defined == true
 
-    sig { returns(T.nilable(String)) }
+    # Message that explains why the formula was excluded from autobump list.
+    # Returns `nil` if no message is specified.
+    #
+    # @see .no_autobump!
+    sig { returns(T.nilable(T.any(String, Symbol))) }
     attr_reader :no_autobump_message
 
     # Service can be used to define services.

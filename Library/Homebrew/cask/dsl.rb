@@ -105,7 +105,6 @@ module Cask
       :livecheckable?, # TODO: remove once `#livecheckable?` is removed
       :no_autobump!,
       :autobump?,
-      :no_autobump_defined?,
       :no_autobump_message,
       :on_system_blocks_exist?,
       :on_system_block_min_os,
@@ -547,8 +546,15 @@ module Cask
       @livecheck_defined == true
     end
 
+    # Excludes the cask from autobump list.
+    #
+    # TODO: limit this method to the official taps only (f.e. raise
+    # an error if `!tap.official?`)
+    #
+    # @api public
+    sig { params(because: T.any(String, Symbol)).void }
     def no_autobump!(because:)
-      if !because.is_a?(String) && (!because.is_a?(Symbol) || !NO_AUTOBUMP_REASONS_LIST.key?(because))
+      if because.is_a?(Symbol) && !NO_AUTOBUMP_REASONS_LIST.key?(because)
         raise ArgumentError, "'because' argument should use valid symbol or a string!"
       end
 
@@ -557,16 +563,16 @@ module Cask
       end
 
       @no_autobump_defined = true
-      # TODO: add symbol support when a list of common reasons is ready.
-      # At this moment just convert symbols to a string
-      @no_autobump_message = because.to_s
+      @no_autobump_message = because
       @autobump = false
     end
 
+    # Is the cask in autobump list?
     def autobump?
       @autobump == true
     end
 
+    # Is no_autobump! method defined?
     def no_autobump_defined?
       @no_autobump_defined == true
     end

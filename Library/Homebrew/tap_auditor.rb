@@ -54,6 +54,7 @@ module Homebrew
       check_formula_list_directory "audit_exceptions", @tap_audit_exceptions
       check_formula_list_directory "style_exceptions", @tap_style_exceptions
       check_formula_list "pypi_formula_mappings", @tap_pypi_formula_mappings
+      check_formula_list ".github/autobump.txt", @tap_autobump
       check_formula_list "formula_renames", @formula_renames.values
     end
 

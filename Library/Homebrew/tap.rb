@@ -20,6 +20,8 @@ class Tap
   private_constant :HOMEBREW_TAP_FORMULA_RENAMES_FILE
   HOMEBREW_TAP_MIGRATIONS_FILE = "tap_migrations.json"
   private_constant :HOMEBREW_TAP_MIGRATIONS_FILE
+  HOMEBREW_TAP_AUTOBUMP_FILE = ".github/autobump.txt"
+  private_constant :HOMEBREW_TAP_AUTOBUMP_FILE
   HOMEBREW_TAP_PYPI_FORMULA_MAPPINGS_FILE = "pypi_formula_mappings.json"
   private_constant :HOMEBREW_TAP_PYPI_FORMULA_MAPPINGS_FILE
   HOMEBREW_TAP_SYNCED_VERSIONS_FORMULAE_FILE = "synced_versions_formulae.json"
@@ -983,11 +985,6 @@ class Tap
   # Array with autobump names
   sig { returns(T::Array[String]) }
   def autobump
-    unless official?
-      @autobump ||= []
-      return @autobump
-    end
-
     @autobump ||= if core_cask_tap?
       Homebrew::API::Cask.all_casks.select do |_, cask|
         cask["autobump"] == true && !cask["skip_livecheck"]
@@ -997,6 +994,16 @@ class Tap
         formula["autobump"] == true && !formula["skip_livecheck"]
       end.keys
     end
+
+    if @autobump.empty?
+      @autobump = if (autobump_file = path/HOMEBREW_TAP_AUTOBUMP_FILE).file?
+        autobump_file.readlines(chomp: true)
+      else
+        []
+      end
+    end
+
+    @autobump
   end
 
   # Whether this {Tap} allows running bump commands on the given {Formula} or {Cask}.

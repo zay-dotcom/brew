@@ -1,6 +1,7 @@
 # typed: true # rubocop:todo Sorbet/StrictSigil
 # frozen_string_literal: true
 
+require "autobump_constants"
 require "locale"
 require "lazy_object"
 require "livecheck"
@@ -547,14 +548,18 @@ module Cask
     end
 
     def no_autobump!(because:)
-      raise ArgumentError, "`because` argument must be a string!" unless because.is_a?(String)
+      if !because.is_a?(String) && (!because.is_a?(Symbol) || !NO_AUTOBUMP_REASONS_LIST.key?(because))
+        raise ArgumentError, "'because' argument should use valid symbol or a string!"
+      end
 
       if !@cask.allow_reassignment && @no_autobump_defined
         raise CaskInvalidError.new(cask, "'no_autobump_defined' stanza may only appear once.")
       end
 
       @no_autobump_defined = true
-      @no_autobump_message = because
+      # TODO: add symbol support when a list of common reasons is ready.
+      # At this moment just convert symbols to a string
+      @no_autobump_message = because.to_s
       @autobump = false
     end
 

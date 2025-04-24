@@ -1,6 +1,7 @@
 # typed: strict
 # frozen_string_literal: true
 
+require "autobump_constants"
 require "cache_store"
 require "did_you_mean"
 require "formula_support"
@@ -4202,10 +4203,14 @@ class Formula
     # Method that excludes the formula from the autobump list.
     #
     # @api public
-    sig { params(because: String).returns(T.untyped) }
+    sig { params(because: T.any(String, Symbol)).returns(T.untyped) }
     def no_autobump!(because:)
+      if because.is_a?(Symbol) && !NO_AUTOBUMP_REASONS_LIST.key?(because)
+        raise ArgumentError, "'because' argument should use valid symbol or a string!"
+      end
+
       @no_autobump_defined = T.let(true, T.nilable(T::Boolean))
-      @no_autobump_message = T.let(because, T.nilable(String))
+      @no_autobump_message = T.let(because.to_s, T.nilable(String))
       @autobump = T.let(false, T.nilable(T::Boolean))
     end
 

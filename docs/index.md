@@ -20,7 +20,7 @@ last_review_date: "2025-02-08"
 - [Bottles (binary packages)](Bottles.md)
 - [Taps (third-party repositories)](Taps.md)
 - [Interesting Taps and Forks](Interesting-Taps-and-Forks.md)
-- [Tips and Tricks](Tips-N'-Tricks.md)
+- [Tips and Tricks](Tips-and-Tricks.md)
 - [Anonymous Analytics](Analytics.md)
 
 - [Querying `brew`](Querying-Brew.md)

@@ -171,7 +171,6 @@
 
 # Ignore generated documentation site
 /docs/_site
-/docs/bin
 /docs/.jekyll-metadata
 /docs/vendor
 /docs/Gemfile.lock

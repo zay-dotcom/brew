@@ -417,12 +417,10 @@ Style/MutableConstant:
 Style/NumericLiteralPrefix:
   EnforcedOctalStyle: zero_only
 
-# Only use this for numbers >= `1_000_000`.
+# Only require this for numbers >= `10_000_000_000`.
 Style/NumericLiterals:
-  MinDigits: 7
+  MinDigits: 11
   Strict: true
-  Exclude:
-    - "**/Brewfile"
 
 Style/OpenStructUse:
   Exclude:

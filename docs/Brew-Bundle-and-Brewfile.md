@@ -22,7 +22,7 @@ A simple `Brewfile` might contain a formula:
 brew "ruby"
 ```
 
-When you run `brew bundle install` (or: just `brew bundle` for short), this will run `brew install ruby` to install Ruby if needed.
+When you run `brew bundle install` (or: just `brew bundle` for short), this will take instructions from the `Brewfile` to run `brew install ruby` and install Ruby if needed.
 
 ```console
 $ brew bundle
@@ -82,11 +82,14 @@ Using editorconfig.editorconfig
 
 ### Projects
 
-Adding a `Brewfile` to a project's repository (like you might a `package.json`, `Gemfile` or `requirements.txt`) is a nicer way of encoding project dependencies.
+Adding a `Brewfile` to a project's repository (like you might a `package.json`, `Gemfile` or `requirements.txt`) is a nicer way of encoding project dependencies for developer environments.
 
 It allows you to tell users to run a single command to install all dependencies for a project and start any services.
 
 As Homebrew supports both macOS, Linux and WSL: you can have this single command setup project dependencies on three operating systems and in continuous integration services like GitHub Actions (where it's installed by default on macOS and easily on Linux with [`Homebrew/actions/setup-homebrew`](https://github.com/Homebrew/actions/tree/master/setup-homebrew)).
+
+See [GitHub's "Scripts To Rule Them All" `script/bootstrap` example](https://github.com/github/scripts-to-rule-them-all/blob/master/script/bootstrap)
+for how you might use a `Brewfile` and `brew bundle` to install project dependencies with Homebrew.
 
 ### `brew bundle dump`
 

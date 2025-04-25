@@ -108,8 +108,8 @@ module Homebrew
             end
           end
 
-          # Ensure brew bundle sh/env commands have access to other tools in the PATH
-          if ["sh", "env"].include?(subcommand) && (homebrew_path = ENV.fetch("HOMEBREW_PATH", nil))
+          # Ensure brew bundle exec/sh/env commands have access to other tools in the PATH
+          if (homebrew_path = ENV.fetch("HOMEBREW_PATH", nil))
             ENV.append_path "PATH", homebrew_path
           end
 
@@ -124,15 +124,31 @@ module Homebrew
             ENV.delete(var)
           end
 
+          ENV.each do |key, value|
+            # Look for PATH-like environment variables
+            next if key.exclude?("PATH") || !value.match?(PATH_LIKE_ENV_REGEX)
+
+            # Exclude Homebrew shims from the PATH as they don't work
+            # without all Homebrew environment variables and can interfere with
+            # non-Homebrew builds.
+            ENV[key] = PATH.new(value)
+                           .reject do |path_value|
+              path_value.include?("/Homebrew/shims/")
+            end.to_s
+          end
+
           if subcommand == "env"
             ENV.sort.each do |key, value|
-              # No need to export empty values.
-              next if value.blank?
-
               # Skip exporting Homebrew internal variables that won't be used by other tools.
               # Those Homebrew needs have already been set to global constants and/or are exported again later.
               # Setting these globally can interfere with nested Homebrew invocations/environments.
-              next if key.start_with?("HOMEBREW_", "PORTABLE_RUBY_")
+              if key.start_with?("HOMEBREW_", "PORTABLE_RUBY_")
+                ENV.delete(key)
+                next
+              end
+
+              # No need to export empty values.
+              next if value.blank?
 
               # Skip exporting things that were the same in the old environment.
               old_value = old_env[key]
@@ -143,10 +159,8 @@ module Homebrew
                 old_values = old_value.to_s.split(File::PATH_SEPARATOR)
                 path = PATH.new(value)
                            .reject do |path_value|
-                  # Exclude Homebrew shims from the PATH as they don't work
-                  # without all Homebrew environment variables.
                   # Exclude existing/old values as they've already been exported.
-                  path_value.include?("/Homebrew/shims/") || old_values.include?(path_value)
+                  old_values.include?(path_value)
                 end
                 next if path.blank?
 

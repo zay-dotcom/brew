@@ -72,6 +72,13 @@ module Homebrew
         # <!-- vale on -->
         write_path(tap, "README.md", readme)
 
+        tests_permissions = {
+          "actions"       => "read",
+          "checks"        => "read",
+          "contents"      => "read",
+          "pull-requests" => "read",
+        }
+        tests_permissions["packages"] = "read" if args.github_packages?
         actions_main = <<~YAML
           name: brew test-bot
 
@@ -87,10 +94,14 @@ module Homebrew
                 matrix:
                   os: [ubuntu-22.04, macos-13, macos-15]
               runs-on: ${{ matrix.os }}
+              permissions:
+          #{tests_permissions.sort.map { |k, v| "      #{k}: #{v}" }.join("\n")}
               steps:
                 - name: Set up Homebrew
                   id: set-up-homebrew
                   uses: Homebrew/actions/setup-homebrew@master
+                  with:
+                    token: ${{ github.token }}
 
                 - name: Cache Homebrew Bundler RubyGems
                   uses: actions/cache@v4
@@ -105,8 +116,20 @@ module Homebrew
 
                 - run: brew test-bot --only-tap-syntax
 
+                - name: Base64-encode GITHUB_TOKEN
+                  id: base64-encode
+                  if: github.event_name == 'pull_request'
+                  env:
+                    TOKEN: ${{ github.token }}
+                  run: |
+                    base64_token=$(echo -n "${TOKEN}" | base64 | tr -d "\\n")
+                    echo "::add-mask::${base64_token}"
+                    echo "token=${base64_token}" >> "${GITHUB_OUTPUT}"
+
                 - run: brew test-bot --only-formulae#{" --root-url='#{root_url}'" if root_url}
                   if: github.event_name == 'pull_request'
+                  env:
+                    HOMEBREW_DOCKER_REGISTRY_TOKEN: ${{ steps.base64-encode.outputs.token }}
 
                 - name: Upload bottles as artifact
                   if: always() && github.event_name == 'pull_request'
@@ -117,7 +140,10 @@ module Homebrew
         YAML
 
         pr_pull_permissions = {
+          "actions"       => "read",
+          "checks"        => "read",
           "contents"      => "write",
+          "issues"        => "read",
           "pull-requests" => "write",
         }
         pr_pull_env = {
@@ -145,6 +171,8 @@ module Homebrew
               steps:
                 - name: Set up Homebrew
                   uses: Homebrew/actions/setup-homebrew@master
+                  with:
+                    token: ${{ github.token }}
 
                 - name: Set up git
                   uses: Homebrew/actions/git-user-config@master
@@ -158,7 +186,6 @@ module Homebrew
                 - name: Push commits
                   uses: Homebrew/actions/git-try-push@master
                   with:
-                    token: ${{ github.token }}
                     branch: #{branch}
 
                 - name: Delete branch

@@ -155,11 +155,10 @@ module Homebrew
 
         global = args.global?
         file = args.file
-        args.zap?
         no_upgrade = if args.upgrade? || subcommand == "upgrade"
           false
         else
-          args.no_upgrade?
+          args.no_upgrade?.present?
         end
         verbose = args.verbose?
         force = args.force?

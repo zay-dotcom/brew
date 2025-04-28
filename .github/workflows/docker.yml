@@ -153,7 +153,6 @@ jobs:
           # odeprecated: remove 20.04 image in Homebrew >=4.7
           - version: "20.04"
             arch: "arm64"
-          - arch: ${{ github.event_name == 'release' && 'arm64' }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -302,7 +301,7 @@ jobs:
 
           image_args=("ghcr.io/homebrew/ubuntu${VERSION}@sha256:$(<"${RUNNER_TEMP}/digests/${VERSION}-x86_64")")
           # odeprecated: remove 20.04 image in Homebrew >=4.7
-          if [[ "${VERSION}" != 20.04 && "${GITHUB_EVENT_NAME}" != "release" ]]; then
+          if [[ "${VERSION}" != 20.04 ]]; then
             image_args+=("ghcr.io/homebrew/ubuntu${VERSION}@sha256:$(<"${RUNNER_TEMP}/digests/${VERSION}-arm64")")
           fi
 

@@ -302,7 +302,7 @@ jobs:
 
           image_args=("ghcr.io/homebrew/ubuntu${VERSION}@sha256:$(<"${RUNNER_TEMP}/digests/${VERSION}-x86_64")")
           # odeprecated: remove 20.04 image in Homebrew >=4.7
-          if [[ "${VERSION}" != 20.04 ]]; then
+          if [[ "${VERSION}" != 20.04 && "${GITHUB_EVENT_NAME}" != "release" ]]; then
             image_args+=("ghcr.io/homebrew/ubuntu${VERSION}@sha256:$(<"${RUNNER_TEMP}/digests/${VERSION}-arm64")")
           fi
 

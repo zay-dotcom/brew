@@ -38,7 +38,7 @@ class SoftwareSpec
     super()
 
     # Ensure this is synced with `initialize_dup` and `freeze` (excluding simple objects like integers and booleans)
-    @resource = Resource::Formula.new
+    @resource = T.let(Resource::Formula.new, Resource::Formula)
     @resources = {}
     @dependency_collector = DependencyCollector.new
     @bottle_specification = BottleSpecification.new

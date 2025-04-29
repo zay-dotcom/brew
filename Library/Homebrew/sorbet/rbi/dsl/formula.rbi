@@ -7,6 +7,9 @@
 
 class Formula
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  def autobump?(*args, &block); end
+
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def allow_network_access!(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }

@@ -987,8 +987,10 @@ class Tap
   def autobump
     autobump_packages = if core_cask_tap?
       Homebrew::API::Cask.all_casks
-    else
+    elsif core_tap?
       Homebrew::API::Formula.all_formulae
+    else
+      {}
     end
 
     @autobump ||= autobump_packages.select do |_, p|

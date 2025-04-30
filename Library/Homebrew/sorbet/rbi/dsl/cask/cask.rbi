@@ -30,7 +30,7 @@ class Cask::Cask
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def auto_updates(*args, &block); end
 
-  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  sig { params(args: T.untyped, block: T.untyped).returns(T::Boolean) }
   def autobump?(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
@@ -143,6 +143,9 @@ class Cask::Cask
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def name(*args, &block); end
+
+  sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
+  def no_autobump!(*args, &block); end
 
   sig { params(args: T.untyped, block: T.untyped).returns(T.untyped) }
   def no_autobump_message(*args, &block); end

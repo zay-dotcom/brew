@@ -214,13 +214,6 @@ class Formula
   sig { returns(T::Boolean) }
   attr_accessor :follow_installed_alias
 
-  # Message that explains why the formula was excluded from autobump list.
-  # Returns `nil` if no message is specified.
-  #
-  # @see .no_autobump!
-  sig { returns(T.nilable(T.any(String, Symbol))) }
-  attr_reader :no_autobump_message
-
   alias follow_installed_alias? follow_installed_alias
 
   # Whether or not to force the use of a bottle.

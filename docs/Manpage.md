@@ -4055,6 +4055,10 @@ command execution e.g. `$(cat file)`.
 : A space-separated list of taps. Homebrew will refuse to install a formula if
   it or any of its dependencies is in a tap on this list.
 
+`HOMEBREW_FORBID_CASKS`
+
+: If set, Homebrew will refuse to install any casks.
+
 `HOMEBREW_FORBID_PACKAGES_FROM_PATHS`
 
 : If set, Homebrew will refuse to read formulae or casks provided from file

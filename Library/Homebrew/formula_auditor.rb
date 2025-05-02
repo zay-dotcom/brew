@@ -519,7 +519,6 @@ module Homebrew
       "kibana"             => "7.11",
       "nomad"              => "1.7",
       "packer"             => "1.10",
-      "redis"              => "7.4",
       "terraform"          => "1.6",
       "vagrant"            => "2.4",
       "vagrant-completion" => "2.4",

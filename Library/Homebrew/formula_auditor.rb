@@ -515,8 +515,6 @@ module Homebrew
     RELICENSED_FORMULAE_VERSIONS = {
       "boundary"           => "0.14",
       "consul"             => "1.17",
-      "elasticsearch"      => "7.11",
-      "kibana"             => "7.11",
       "nomad"              => "1.7",
       "packer"             => "1.10",
       "terraform"          => "1.6",

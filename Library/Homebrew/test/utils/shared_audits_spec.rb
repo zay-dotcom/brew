@@ -1,8 +1,62 @@
 # frozen_string_literal: true
 
 require "utils/shared_audits"
+require "utils/curl"
 
 RSpec.describe SharedAudits do
+  let(:eol_json_text) do
+    <<~JSON
+      {
+        "schema_version" : "1.0.0",
+        "generated_at": "2025-05-03T15:47:58+00:00",
+        "result": {
+          "name": "22",
+          "codename": null,
+          "label": "22 (LTS)",
+          "releaseDate": "2024-04-24",
+          "isLts": true,
+          "ltsFrom": "2024-10-29",
+          "isEoas": false,
+          "eoasFrom": "2025-10-21",
+          "isEol": false,
+          "eolFrom": "2027-04-30",
+          "isEoes": null,
+          "eoesFrom": null,
+          "isMaintained": true,
+          "latest": {
+            "name": "22.15.0",
+            "date": "2025-04-23",
+            "link": "https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V22.md#22.15.0"
+          }
+        }
+      }
+    JSON
+  end
+
+  def mock_curl_output(stdout: "", success: true)
+    status = instance_double(Process::Status, success?: success)
+    curl_output = instance_double(SystemCommand::Result, stdout:, status:)
+    allow(Utils::Curl).to receive(:curl_output).and_return curl_output
+  end
+
+  describe "::eol_data" do
+    it "returns the `isEol` and `eolFrom` values if the product is found" do
+      mock_curl_output stdout: eol_json_text
+      expect(described_class.eol_data("product", "cycle").dig("result", "isEol")).to be(false)
+      expect(described_class.eol_data("product", "cycle").dig("result", "eolFrom")).to eq("2027-04-30")
+    end
+
+    it "returns nil if the product is not found" do
+      mock_curl_output stdout: "<html></html>"
+      expect(described_class.eol_data("none", "cycle")).to be_nil
+    end
+
+    it "returns nil if api call fails" do
+      mock_curl_output success: false
+      expect(described_class.eol_data("", "")).to be_nil
+    end
+  end
+
   describe "::github_tag_from_url" do
     it "finds tags in archive urls" do
       url = "https://github.com/a/b/archive/refs/tags/v1.2.3.tar.gz"

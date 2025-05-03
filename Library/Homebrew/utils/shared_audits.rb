@@ -12,10 +12,15 @@ module SharedAudits
   def self.eol_data(product, cycle)
     @eol_data ||= T.let({}, T.nilable(T::Hash[String, T.untyped]))
     @eol_data["#{product}/#{cycle}"] ||= begin
-      result = Utils::Curl.curl_output("--location", "https://endoflife.date/api/#{product}/#{cycle}.json")
-      json = JSON.parse(result.stdout) if result.status.success?
-      json = nil if json&.dig("message")&.include?("Product not found")
-      json
+      result = Utils::Curl.curl_output("--location", "https://endoflife.date/api/v1/products/#{product}/releases/#{cycle}")
+
+      if result.status.success?
+        begin
+          JSON.parse(result.stdout)
+        rescue JSON::ParserError
+          nil
+        end
+      end
     end
   end
 

@@ -8,25 +8,21 @@ RSpec.describe SharedAudits do
     <<~JSON
       {
         "schema_version" : "1.0.0",
-        "generated_at": "2025-05-03T15:47:58+00:00",
+        "generated_at": "2025-01-02T01:23:45+00:00",
         "result": {
-          "name": "22",
+          "name": "1.2",
           "codename": null,
-          "label": "22 (LTS)",
-          "releaseDate": "2024-04-24",
-          "isLts": true,
-          "ltsFrom": "2024-10-29",
-          "isEoas": false,
-          "eoasFrom": "2025-10-21",
-          "isEol": false,
-          "eolFrom": "2027-04-30",
-          "isEoes": null,
-          "eoesFrom": null,
-          "isMaintained": true,
+          "label": "1.2",
+          "releaseDate": "2024-01-01",
+          "isLts": false,
+          "ltsFrom": null,
+          "isEol": true,
+          "eolFrom": "2025-01-01",
+          "isMaintained": false,
           "latest": {
-            "name": "22.15.0",
-            "date": "2025-04-23",
-            "link": "https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V22.md#22.15.0"
+            "name": "1.0.0",
+            "date": "2024-01-01",
+            "link": "https://example.com/1.0.0"
           }
         }
       }
@@ -40,10 +36,10 @@ RSpec.describe SharedAudits do
   end
 
   describe "::eol_data" do
-    it "returns the `isEol` and `eolFrom` values if the product is found" do
+    it "returns a parsed JSON object if the product is found" do
       mock_curl_output stdout: eol_json_text
-      expect(described_class.eol_data("product", "cycle").dig("result", "isEol")).to be(false)
-      expect(described_class.eol_data("product", "cycle").dig("result", "eolFrom")).to eq("2027-04-30")
+      expect(described_class.eol_data("product", "cycle").dig("result", "isEol")).to be(true)
+      expect(described_class.eol_data("product", "cycle").dig("result", "eolFrom")).to eq("2025-01-01")
     end
 
     it "returns nil if the product is not found" do

@@ -38,8 +38,8 @@ RSpec.describe SharedAudits do
   describe "::eol_data" do
     it "returns a parsed JSON object if the product is found" do
       mock_curl_output stdout: eol_json_text
-      expect(described_class.eol_data("product", "cycle").dig("result", "isEol")).to be(true)
-      expect(described_class.eol_data("product", "cycle").dig("result", "eolFrom")).to eq("2025-01-01")
+      expect(described_class.eol_data("product", "cycle")&.dig("result", "isEol")).to be(true)
+      expect(described_class.eol_data("product", "cycle")&.dig("result", "eolFrom")).to eq("2025-01-01")
     end
 
     it "returns nil if the product is not found" do

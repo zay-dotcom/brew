@@ -11,16 +11,19 @@ module SharedAudits
   sig { params(product: String, cycle: String).returns(T.nilable(T::Hash[String, T.untyped])) }
   def self.eol_data(product, cycle)
     @eol_data ||= T.let({}, T.nilable(T::Hash[String, T.untyped]))
-    @eol_data["#{product}/#{cycle}"] ||= begin
-      result = Utils::Curl.curl_output("--location", "https://endoflife.date/api/v1/products/#{product}/releases/#{cycle}")
+    key = "#{product}/#{cycle}"
+    return @eol_data[key] if @eol_data.key?(key)
 
-      if result.status.success?
-        begin
-          JSON.parse(result.stdout)
-        rescue JSON::ParserError
-          nil
-        end
-      end
+    result = Utils::Curl.curl_output(
+      "--location",
+      "https://endoflife.date/api/v1/products/#{product}/releases/#{cycle}",
+    )
+    return unless result.status.success?
+
+    @eol_data[key] = begin
+      JSON.parse(result.stdout)
+    rescue JSON::ParserError
+      nil
     end
   end
 

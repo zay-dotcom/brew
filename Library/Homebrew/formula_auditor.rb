@@ -612,11 +612,10 @@ module Homebrew
       metadata = SharedAudits.eol_data(name, formula.version.major.to_s)
       metadata ||= SharedAudits.eol_data(name, formula.version.major_minor.to_s)
 
-      return if metadata.blank? || (eol = metadata["eol"]).blank?
+      return if metadata.blank? || (metadata.dig("result", "isEol") != true)
 
-      is_eol = eol == true
-      is_eol ||= eol.is_a?(String) && (eol_date = Date.parse(eol)) <= Date.today
-      return unless is_eol
+      eol_from = metadata.dig("result", "eolFrom")
+      eol_date = Date.parse(eol_from) if eol_from.present?
 
       message = "Product is EOL"
       message += " since #{eol_date}" if eol_date.present?
